@@ -14,6 +14,7 @@ class SimpleBankAccountTest {
     private BankAccount bankAccount;
 
     private static final double INITIAL_BALANCE = 0.0;
+    private static final double NEGATIVE_INITIAL_BALANCE = -100.0;
     private static final double CORRECT_DEPOSIT_AMOUNT_EXAMPLE = 100.0;
     private static final double WRONG_DEPOSIT_AMOUNT_EXAMPLE = 50.0;
     private static final double CORRECT_WITHDRAW_AMOUNT_EXAMPLE = 70.0;
@@ -23,6 +24,12 @@ class SimpleBankAccountTest {
     void beforeEach(){
         accountHolder = new AccountHolder("Mario", "Rossi", 1);
         bankAccount = new SimpleBankAccount(accountHolder, INITIAL_BALANCE);
+    }
+
+    @Test
+    void testWrongInitialBalance() {
+        final AccountHolder localAccountHolder = new AccountHolder("Marco", "Paggetti", 2);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new SimpleBankAccount(accountHolder, NEGATIVE_INITIAL_BALANCE));
     }
 
     @Test

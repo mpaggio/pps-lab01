@@ -12,7 +12,11 @@ public class SimpleBankAccount implements BankAccount {
 
     public SimpleBankAccount(final AccountHolder holder, final double balance) {
         this.holder = holder;
-        this.balance = balance;
+        if (checkAmount(balance)) {
+            this.balance = balance;
+        } else {
+            throw new IllegalArgumentException("Initial balance value must be positive! Given a negative one.");
+        }
     }
 
     @Override
