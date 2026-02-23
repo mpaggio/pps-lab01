@@ -27,14 +27,14 @@ class SimpleBankAccountTest {
     }
 
     @Test
-    void testWrongInitialBalance() {
-        final AccountHolder localAccountHolder = new AccountHolder("Marco", "Paggetti", 2);
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new SimpleBankAccount(accountHolder, NEGATIVE_INITIAL_BALANCE));
+    void testInitialBalance() {
+        assertEquals(INITIAL_BALANCE, bankAccount.getBalance());
     }
 
     @Test
-    void testInitialBalance() {
-        assertEquals(INITIAL_BALANCE, bankAccount.getBalance());
+    void testWrongInitialBalance() {
+        final AccountHolder localAccountHolder = new AccountHolder("Marco", "Paggetti", 2);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new SimpleBankAccount(accountHolder, NEGATIVE_INITIAL_BALANCE));
     }
 
     @Test
