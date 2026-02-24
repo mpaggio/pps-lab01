@@ -3,15 +3,23 @@ package tdd;
 public class SmartDoorLockImpl implements SmartDoorLock {
     private boolean isLocked = false;
     private int pin = -1;
+    private int failedAttempts = 0;
 
     @Override
     public void setPin(int pin) {
+        if (pin < 0 || pin > 9999) {
+            throw new IllegalArgumentException("PIN must be a 4-digit value! Illegal PIN entered.");
+        }
         this.pin = pin;
     }
 
     @Override
     public void unlock(int pin) {
-
+        if (this.pin == pin) {
+            this.isLocked = false;
+        } else {
+            this.failedAttempts++;
+        }
     }
 
     @Override
@@ -39,7 +47,7 @@ public class SmartDoorLockImpl implements SmartDoorLock {
 
     @Override
     public int getFailedAttempts() {
-        return 0;
+        return this.failedAttempts;
     }
 
     @Override
