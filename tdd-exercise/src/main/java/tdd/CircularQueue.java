@@ -13,4 +13,17 @@ package tdd;
  *   - Introduce methods in the interface in order to make the tests pass.
  *   - Refactor
  */
-public interface CircularQueue { }
+public interface CircularQueue {
+
+    boolean isEmpty();
+
+    void enqueue(final int value);
+
+    int dequeue();
+
+    int peek ();
+
+    int getFixedSize();
+
+    int getSize();
+}
