@@ -6,7 +6,7 @@ public class SmartDoorLockImpl implements SmartDoorLock {
 
     @Override
     public void setPin(int pin) {
-
+        this.pin = pin;
     }
 
     @Override
@@ -16,10 +16,10 @@ public class SmartDoorLockImpl implements SmartDoorLock {
 
     @Override
     public void lock() {
-        this.isLocked = true;
         if (this.pin == -1) {
             throw new IllegalStateException("Door locked succesfully, but no pin ");
         }
+        this.isLocked = true;
     }
 
     @Override
