@@ -46,20 +46,74 @@ public class SmartDoorLockTest {
         assertThrows(IllegalArgumentException.class, () -> this.smartDoor.setPin(WRONG_PIN_EXAMPLE));
     }
 
-    @Test
-    public void testSmartDoorUnlockWithTheCorrectPin() {
+    private void setPinAndLock() {
         this.smartDoor.setPin(PIN_EXAMPLE);
         this.smartDoor.lock();
+    }
+
+    @Test
+    public void testSmartDoorUnlockWithCorrectPin() {
+        setPinAndLock();
         this.smartDoor.unlock(PIN_EXAMPLE);
         assertFalse(this.smartDoor.isLocked());
     }
 
     @Test
-    public void testSmartDoorDoesNotUnlockWithTheIncorrectPin() {
-        this.smartDoor.setPin(PIN_EXAMPLE);
-        this.smartDoor.lock();
+    public void testSmartDoorDoesNotUnlockWithIncorrectPin() {
+        setPinAndLock();
         this.smartDoor.unlock(WRONG_PIN_EXAMPLE);
         assertTrue(this.smartDoor.isLocked());
         assertEquals(INITIAL_FAILED_ATTEMPTS + 1, this.smartDoor.getFailedAttempts());
+    }
+
+    private void repeatUnlockWithWrongPinForMaxAttemptsTimes() {
+        setPinAndLock();
+        for (int i = 0; i < this.smartDoor.getMaxAttempts(); i++) {
+            this.smartDoor.unlock(WRONG_PIN_EXAMPLE);
+        }
+    }
+
+    @Test
+    public void testSmartDoorBlockWithMaxNumberOfIncorrectPinUnlock() {
+        repeatUnlockWithWrongPinForMaxAttemptsTimes();
+        assertTrue(this.smartDoor.isLocked());
+        assertTrue(this.smartDoor.isBlocked());
+    }
+
+    @Test
+    public void testSmartDoorResetWhenBlocked() {
+        repeatUnlockWithWrongPinForMaxAttemptsTimes();
+        this.smartDoor.reset();
+        assertFalse(this.smartDoor.isLocked());
+        assertFalse(this.smartDoor.isBlocked());
+        assertEquals(INITIAL_FAILED_ATTEMPTS, this.smartDoor.getFailedAttempts());
+    }
+
+    @Test
+    public void testSmartDoorUnlockWithCorrectPinAfterBeingBlocked() {
+        repeatUnlockWithWrongPinForMaxAttemptsTimes();
+        assertThrows(IllegalStateException.class, () -> this.smartDoor.unlock(PIN_EXAMPLE));
+    }
+
+    @Test
+    public void testSmartDoorNotSetPinDuringLock() {
+        setPinAndLock();
+        assertThrows(IllegalStateException.class, () -> this.smartDoor.setPin(PIN_EXAMPLE));
+    }
+
+    @Test
+    public void testSmartDoorNotSetPinDuringBlock() {
+        repeatUnlockWithWrongPinForMaxAttemptsTimes();
+        assertThrows(IllegalStateException.class, () -> this.smartDoor.setPin(PIN_EXAMPLE));
+    }
+
+    @Test
+    public void testSmartDoorResetFailedAttemptsAfterCorrectPin() {
+        setPinAndLock();
+        for (int i = 0; i < this.smartDoor.getMaxAttempts() - 1; i++) {
+            this.smartDoor.unlock(WRONG_PIN_EXAMPLE);
+        }
+        this.smartDoor.unlock(PIN_EXAMPLE);
+        assertEquals(INITIAL_FAILED_ATTEMPTS, this.smartDoor.getFailedAttempts());
     }
 }
