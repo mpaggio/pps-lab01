@@ -1,20 +1,31 @@
 package tdd;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SmartDoorLockTest {
-    @Test
-    public void isSmartDoorInitiallyUnlocked() {
-        SmartDoorLock smartDoorLock = new SmartDoorLockImpl();
-        assertFalse(smartDoorLock.isLocked());
+    private SmartDoorLock smartDoor;
+
+    @BeforeEach
+    public void setUp() {
+        this.smartDoor = new SmartDoorLockImpl();
     }
 
     @Test
-    public void smartDoorLockWithoutPin() {
-        SmartDoorLock smartDoorLock = new SmartDoorLockImpl();
-        assertThrows(IllegalStateException.class, () -> smartDoorLock.lock());
-        assertTrue(smartDoorLock.isLocked());
+    public void testSmartDoorInitiallyUnlocked() {
+        assertFalse(this.smartDoor.isLocked());
+    }
+
+    @Test
+    public void testSmartDoorInitiallyNotBlocked() {
+        assertFalse(this.smartDoor.isBlocked());
+    }
+
+    @Test
+    public void testSmartDoorLockWithoutPin() {
+        assertThrows(IllegalStateException.class, this.smartDoor::lock);
+        assertTrue(this.smartDoor.isLocked());
     }
 }
