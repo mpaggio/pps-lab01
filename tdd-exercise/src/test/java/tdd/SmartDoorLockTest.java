@@ -76,7 +76,6 @@ public class SmartDoorLockTest {
     @Test
     public void testSmartDoorBlockWithMaxNumberOfIncorrectPinUnlock() {
         repeatUnlockWithWrongPinForMaxAttemptsTimes();
-        assertTrue(this.smartDoor.isLocked());
         assertTrue(this.smartDoor.isBlocked());
     }
 

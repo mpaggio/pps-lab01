@@ -1,8 +1,7 @@
 package tdd;
 
 public class SmartDoorLockImpl implements SmartDoorLock {
-    private boolean isLocked = false;
-    private boolean isBlocked = false;
+    private State lockStatus = State.OPEN;
     private int pin = INITIAL_PIN_VALUE;
     private int failedAttempts = INITIAL_FAILED_ATTEMPTS;
     private static final int INITIAL_PIN_VALUE = -1;
@@ -11,12 +10,18 @@ public class SmartDoorLockImpl implements SmartDoorLock {
     private static final int MIN_PIN_VALUE = 0;
     private static final int MAX_ATTEMPTS = 5;
 
+    private enum State {
+        OPEN,
+        LOCKED,
+        BLOCKED
+    }
+
     @Override
     public void setPin(int pin) {
         if (pin < MIN_PIN_VALUE || pin > MAX_PIN_VALUE) {
             throw new IllegalArgumentException("PIN must be a 4-digit value! Illegal PIN entered.");
         }
-        if (this.isLocked || this.isBlocked) {
+        if (lockStatus.equals(State.LOCKED) || lockStatus.equals(State.BLOCKED)) {
             throw new IllegalStateException("PIN can't be set while door is locked or blocked.");
         }
         this.pin = pin;
@@ -24,16 +29,16 @@ public class SmartDoorLockImpl implements SmartDoorLock {
 
     @Override
     public void unlock(int pin) {
-        if (this.isBlocked) {
+        if (lockStatus.equals(State.BLOCKED)) {
             throw new IllegalStateException("Tried entering PIN, but door lock is blocked! Please reset the door lock and insert a new PIN");
         }
         if (this.pin == pin) {
-            this.isLocked = false;
+            this.lockStatus = State.OPEN;
             this.failedAttempts = 0;
         } else {
             this.failedAttempts++;
             if (this.failedAttempts >= MAX_ATTEMPTS) {
-                this.isBlocked = true;
+                this.lockStatus = State.BLOCKED;
             }
         }
     }
@@ -43,17 +48,17 @@ public class SmartDoorLockImpl implements SmartDoorLock {
         if (this.pin == INITIAL_PIN_VALUE) {
             throw new IllegalStateException("Trying to lock the door with no PIN set! Please, set a PIN and retry.");
         }
-        this.isLocked = true;
+        this.lockStatus = State.LOCKED;
     }
 
     @Override
     public boolean isLocked() {
-        return this.isLocked;
+        return this.lockStatus.equals(State.LOCKED);
     }
 
     @Override
     public boolean isBlocked() {
-        return this.isBlocked;
+        return this.lockStatus.equals(State.BLOCKED);
     }
 
     @Override
@@ -68,8 +73,7 @@ public class SmartDoorLockImpl implements SmartDoorLock {
 
     @Override
     public void reset() {
-        this.isLocked = false;
-        this.isBlocked = false;
+        this.lockStatus = State.OPEN;
         this.failedAttempts = INITIAL_FAILED_ATTEMPTS;
         this.pin = INITIAL_PIN_VALUE;
     }
