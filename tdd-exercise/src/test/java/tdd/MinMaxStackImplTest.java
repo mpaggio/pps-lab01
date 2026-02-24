@@ -16,7 +16,9 @@ class MinMaxStackImplTest {
         List.of(1,2,3,4,5),
         List.of(5,4,3,2,1),
         List.of(1,2,2,4,5),
-        List.of(5,3,7,2,6)
+        List.of(5,3,7,2,6),
+        List.of(5,5,2,1,1),
+        List.of(0,1,-1,-5,2)
     );
 
     @BeforeEach
@@ -33,6 +35,7 @@ class MinMaxStackImplTest {
     public void testFirstPush() {
         this.stack.push(EXAMPLE_VALUE);
         assertEquals(EXAMPLE_VALUE, this.stack.peek());
+        assertEquals(1, this.stack.size());
     }
 
     @Test
@@ -44,6 +47,23 @@ class MinMaxStackImplTest {
     public void testPopWithNonEmptyStack() {
         this.stack.push(EXAMPLE_VALUE);
         assertEquals(EXAMPLE_VALUE, this.stack.pop());
+        assertEquals(0, this.stack.size());
+        assertTrue(this.stack.isEmpty());
+    }
+
+    @Test
+    public void testGetMinWithEmptyStack() {
+        assertThrows(IllegalStateException.class, () -> this.stack.getMin());
+    }
+
+    @Test
+    public void testGetMaxWithEmptyStack() {
+        assertThrows(IllegalStateException.class, () -> this.stack.getMax());
+    }
+
+    @Test
+    public void testPeekWithEmptyStack() {
+        assertThrows(IllegalStateException.class, () -> this.stack.peek());
     }
 
     private void pushValues(final List<Integer> values) {
